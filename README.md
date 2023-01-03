@@ -17,6 +17,9 @@ PostgreSQL database and local cache are used to store data.
 
 ### HTTP API
 
-* `GET http://localhost:8080/orders` - get all orders
-* `GET http://localhost:8080/orders/:id` - get order by id
-* `POST http://localhost:8080/orders` - create order
+* Get all orders:  
+  `GET http://localhost:8080/orders`
+* Get order by id:  
+  `GET http://localhost:8080/orders/:id`
+* Create order:  
+  `POST http://localhost:8080/orders`
