@@ -6,17 +6,17 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/l-orlov/orders-service/internal/cache"
-	db2 "github.com/l-orlov/orders-service/internal/db"
+	"github.com/l-orlov/orders-service/internal/db"
 	"github.com/l-orlov/orders-service/internal/model"
 	"github.com/pkg/errors"
 )
 
 type Handler struct {
-	database  *db2.Database
+	database  *db.Database
 	cacheImpl *cache.Cache
 }
 
-func New(database *db2.Database, cacheImpl *cache.Cache) http.Handler {
+func New(database *db.Database, cacheImpl *cache.Cache) http.Handler {
 	h := &Handler{
 		database:  database,
 		cacheImpl: cacheImpl,
@@ -25,7 +25,7 @@ func New(database *db2.Database, cacheImpl *cache.Cache) http.Handler {
 	router := gin.Default()
 	router.GET("/orders", h.getOrders)
 	router.GET("/orders/:id", h.getOrderByID)
-	router.POST("/orders", h.postOrders)
+	router.POST("/orders", h.postOrder)
 
 	return router
 }
@@ -47,7 +47,7 @@ func (h *Handler) getOrders(c *gin.Context) {
 }
 
 // postOrders создает заказ
-func (h *Handler) postOrders(c *gin.Context) {
+func (h *Handler) postOrder(c *gin.Context) {
 	newOrder := &model.Order{}
 	err := c.BindJSON(newOrder)
 	if err != nil {
@@ -72,7 +72,7 @@ func (h *Handler) getOrderByID(c *gin.Context) {
 
 	order, err := h.cacheImpl.GetOrder(c, id)
 	if err != nil {
-		if errors.Is(err, db2.ErrNotFound) {
+		if errors.Is(err, db.ErrNotFound) {
 			c.IndentedJSON(http.StatusNotFound, gin.H{"message": "order not found"})
 			return
 		}
